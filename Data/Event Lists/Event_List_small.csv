@@ -1,0 +1,11 @@
+Start Time,End Time,Actor,Event Type,System 1,System 2,System 3,System 4,System 5
+2022-08-09 16:48:37.126537,2022-08-09 16:49:46.864310,Actor 1,Event type 5,Yes,Yes,Yes,No,No
+2022-08-09 16:50:49.621956,2022-08-09 16:51:52.379602,Actor 1,Event type 3,No,No,Yes,Yes,Yes
+2022-08-09 16:56:57.160115,2022-08-09 17:02:01.940628,Actor 1,Event type 3,Yes,Yes,Yes,Yes,Yes
+2022-08-09 17:02:30.496569,2022-08-09 17:02:59.052510,Actor 1,Event type 2,No,Yes,Yes,No,No
+2022-08-09 17:04:54.490881,2022-08-09 17:06:49.929252,Actor 1,Event type 2,No,Yes,Yes,Yes,Yes
+2022-08-09 17:08:19.095125,2022-08-09 17:09:48.260998,Actor 1,Event type 4,Yes,No,Yes,Yes,No
+2022-08-09 17:10:11.363511,2022-08-09 17:10:34.466024,Actor 1,Event type 3,No,No,Yes,Yes,No
+2022-08-09 17:11:58.806554,2022-08-09 17:13:23.147084,Actor 2,Event type 1,No,Yes,Yes,Yes,Yes
+2022-08-09 17:15:48.334253,2022-08-09 17:18:13.521422,Actor 2,Event type 2,Yes,No,Yes,No,No
+2022-08-09 17:22:42.655709,2022-08-09 17:27:11.789996,Actor 2,Event type 2,Yes,No,No,Yes,Yes
