@@ -130,7 +130,7 @@ class AnalysisController:
 
 def Main():
     #controller = AnalysisController
-    dataset_path = pathlib.Path{"C:\Users\heart\Documents\Programming\Python\TimeSeriesDataAnalysis\Data\Datasets\Dataset_small.csv"}
+    dataset_path = pathlib.Path(r"C:\Users\heart\Documents\Programming\Python\TimeSeriesDataAnalysis\Data\Datasets\Dataset_small.csv")
     print("Complete")
     pass
  
