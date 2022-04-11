@@ -62,16 +62,64 @@ class DataEntry:
  
   
 class Event:
+    """
+    Represents one line in a data file.
 
+    ...
+
+    Attributes
+    ----------
+    raw : string
+        Represents a line from a data file.
+    start_time : datetime
+        Represents the first index of the line from a data file.
+    end_time : datetime
+        Represents the second index of the line from a data file.
+    actor : string
+        Represents the third index of the line from a data file.
+    event_type : string
+        Represents the fourth index of the line from a data file.
+    system1 : boolean
+        Represents the fifth index of the line from a data file.
+    system2 : boolean
+        Represents the six index of the line from a data file.
+    system3 : boolean
+        Represents the seventh index of the line from a data file.
+    system4 : boolean
+        Represents the eighth index of the line from a data file.
+    system5 : boolean
+        Represents the ninth index of the line from a data file.        
+
+    Methods
+    -------
+    parse_yes_no(input_string):
+        Represent the string "yes" to a bool True, "no" to bool False and an empty string as None.
+
+    """
     
-    def __init__(self):
-        pass
+    def __init__(self, line):
+        self.raw = line
+        split_line = line.split(',')
+        self.start_time = datetime.strptime(split_line[0])
+        self.end_time = datetime.strptime(split_line[1])
+        self.actor = split_line[2]
+        self.event_type = split_line[3]
+        self.system1 = self.parse_yes_no(split_line[4])
+        self.system2 = self.parse_yes_no(split_line[5])
+        self.system3 = self.parse_yes_no(split_line[6])
+        self.system4 = self.parse_yes_no(split_line[7])
+        self.system5 = self.parse_yes_no(split_line[8])
         
         
-    def parse_yes_no(self):
-        pass
-        
- 
+    def parse_yes_no(self, input_string):
+        output_string = None
+        if input_string == "yes".lower():
+            output_string = True
+        elif input_string == "no".lower():
+            output_string = False
+        return output_string
+
+                          
 class DataSet:
     
     
@@ -88,14 +136,54 @@ class DataSet:
         
 
 class EventList:
+    """
+    Represents one line in a data file.
+
+    ...
+
+    Attributes
+    ----------
+    events : list of Event
+        Represents a Event in a list.
+    column_names : list
+        Represents the first line from a data file.
+    file_path : datetime
+        Represents the file path.    
+
+    Methods
+    -------
+    read_event_file(file_path):
+        Reads an file if file.exist() and stores the first line as column names and the remaining lines as an Event in events list.
+
+    """    
+ 
     
-    
-    def __init__(self):
-        pass
+    def __init__(self, file_path):
+        self.events = []    # How to make this a list of object??????????   [Event]
+        self.column_names = []
+        self.read_event_file(file_path)
         
         
-    def read_event_file(self):
-        pass
+    def read_event_file(self, file_path):
+        if file_path.exists():
+            self.file_path = file_path
+            line_num = 0
+            with open(self.file_path, 'r') as fh:
+                line = fh.readlines()
+                while line != "":
+                    if line_num == 0:
+                        self.column_names.append(line)
+                    elif line_num > 0:
+                        self.events.append(Event(line))
+                    line_num = line_num + 1
+                              
+            # with open(self.file_path, 'r') as fh:
+            #     while (line := fh.readlines()):
+            #         if line_num == 0:
+            #             self.column_names.append(line)
+            #         elif line_num > 0:
+            #             self.events.append(Event(line))
+            #         line_num = line_num + 1
         
 
 class AnalysisController:
@@ -130,9 +218,10 @@ class AnalysisController:
 
 def Main():
     #controller = AnalysisController
-    dataset_path = pathlib.Path(r"C:\Users\heart\Documents\Programming\Python\TimeSeriesDataAnalysis\Data\Datasets\Dataset_small.csv")
+    dataset_file_path = pathlib.Path(r"C:\Users\heart\Documents\Programming\Python\TimeSeriesDataAnalysis\Data\Datasets\Dataset_small.csv")
+    event_file_path = pathlib.Path(r"C:\Users\heart\Documents\Programming\Python\TimeSeriesDataAnalysis\Data\Event Lists\Event_List_small.csv")
+    my_event = EventList(event_file_path)
     print("Complete")
-    pass
  
     
 if __name__ == '__main__':
