@@ -39,7 +39,7 @@ class DataEntry:
 
     Methods
     -------
-    to_string():
+    __str__():
         Represent the DataEntry as a string.
 
     """
@@ -47,7 +47,7 @@ class DataEntry:
     def __init__(self, line):
         self.raw = line
         split_line = line.split(',')
-        self.time = datetime.strptime(split_line[0])
+        self.time = datetime.strptime(split_line[0], "%Y-%m-%d %H:%M:%S.%f")
         self.pressure = float(split_line[1])
         self.altitude = float(split_line[2])
         self.bit_rate = float(split_line[3])
@@ -57,7 +57,7 @@ class DataEntry:
         self.roll = float(split_line[7])
         
         
-    def to_string(self):
+    def __str__(self):
         return f"{self.time},{self.pressure},{self.altitude},{self.bit_rate},{self.pitch},{self.slant_range},{self.distance_to_target},{self.roll}"
  
   
@@ -100,8 +100,8 @@ class Event:
     def __init__(self, line):
         self.raw = line
         split_line = line.split(',')
-        self.start_time = datetime.strptime(split_line[0])
-        self.end_time = datetime.strptime(split_line[1])
+        self.start_time = datetime.strptime(split_line[0], "%Y-%m-%d %H:%M:%S.%f")
+        self.end_time = datetime.strptime(split_line[1], "%Y-%m-%d %H:%M:%S.%f")
         self.actor = split_line[2]
         self.event_type = split_line[3]
         self.system1 = self.parse_yes_no(split_line[4])
@@ -112,12 +112,12 @@ class Event:
         
         
     def parse_yes_no(self, input_string):
-        output_string = None
-        if input_string == "yes".lower():
-            output_string = True
-        elif input_string == "no".lower():
-            output_string = False
-        return output_string
+        output_bool = None
+        if input_string.lower() == "yes":
+            output_bool = True
+        elif input_string.lower() == "no":
+            output_bool = False
+        return output_bool
 
                           
 class DataSet:
@@ -159,8 +159,9 @@ class EventList:
  
     
     def __init__(self, file_path):
-        self.events = []    # How to make this a list of object??????????   [Event]
+        self.events = []
         self.column_names = []
+        self.file_path = file_path
         self.read_event_file(file_path)
         
         
@@ -169,22 +170,13 @@ class EventList:
             self.file_path = file_path
             line_num = 0
             with open(self.file_path, 'r') as fh:
-                line = fh.readlines()
-                while line != "":
+                for line in fh:
                     if line_num == 0:
-                        self.column_names.append(line)
-                    elif line_num > 0:
+                        self.column_names.append(line.split(','))
+                    else:
                         self.events.append(Event(line))
-                    line_num = line_num + 1
-                              
-            # with open(self.file_path, 'r') as fh:
-            #     while (line := fh.readlines()):
-            #         if line_num == 0:
-            #             self.column_names.append(line)
-            #         elif line_num > 0:
-            #             self.events.append(Event(line))
-            #         line_num = line_num + 1
-        
+                    line_num += 1
+                                     
 
 class AnalysisController:
     
@@ -221,6 +213,7 @@ def Main():
     dataset_file_path = pathlib.Path(r"C:\Users\heart\Documents\Programming\Python\TimeSeriesDataAnalysis\Data\Datasets\Dataset_small.csv")
     event_file_path = pathlib.Path(r"C:\Users\heart\Documents\Programming\Python\TimeSeriesDataAnalysis\Data\Event Lists\Event_List_small.csv")
     my_event = EventList(event_file_path)
+    breakpoint
     print("Complete")
  
     
