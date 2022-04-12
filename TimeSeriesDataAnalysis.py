@@ -121,23 +121,60 @@ class Event:
 
                           
 class DataSet:
+    """
+    Represents a list of data once read in a data file.
+
+    ...
+
+    Attributes
+    ----------
+    file_path : string
+        Represents the file path.
+    column_names : list
+        Represents the first line from a data file.
+    raw_header : string
+        Represents the first line from a data file. 
+    data : list
+        Represents the data in the DataSet.
+
+    Methods
+    -------
+    read_data_file(file_path):
+        Reads an file if file.exist() and stores the first line as column names and the remaining lines as an DataEntry in data list.
+    get_data_by_event(event):
+        Returns select data from the DataEntry for which the data.time is between event.start_time and event.end_time.
+    """ 
+          
+    def __init__(self, file_path, raw_header = "", data = []):
+        self.file_path = file_path
+        self.column_names = []
+        self.raw_header = raw_header
+        self.data = data
+        if data == []:
+            self.read_data_file(file_path)
     
-    
-    def __init__(self):
-        pass
+        
+    def read_data_file(self, file_path):
+        if file_path.exists():
+            self.file_path = file_path
+            line_num = 0
+            with open(self.file_path, 'r') as fh:
+                for line in fh:
+                    if line_num == 0:
+                        self.column_names.append(line.split(','))
+                        self.raw_header = line
+                    else:
+                        self.data.append(DataEntry(line))
+                    line_num += 1
         
         
-    def read_data_file(self):
-        pass
-        
-        
-    def get_data_by_event(self):
-        pass
+    def get_data_by_event(self, event):
+        return [x for x in self.data if (x.time >= event.start_time) & (x.time <= event.end_time)]
         
 
 class EventList:
     """
-    Represents one line in a data file.
+    Represents a list of Entries once read in of a entry data file.
 
     ...
 
@@ -156,8 +193,8 @@ class EventList:
         Reads an file if file.exist() and stores the first line as column names and the remaining lines as an Event in events list.
 
     """    
- 
-    
+
+   
     def __init__(self, file_path):
         self.events = []
         self.column_names = []
@@ -179,41 +216,75 @@ class EventList:
                                      
 
 class AnalysisController:
+    """
+    Represents the controller of the project.
+
+    ...
+
+    Attributes
+    ----------
+    all_events : EventList
+        Represents all the data in an EventList.
+    all_datas : DataSet
+        Represents all the data in a DataSet.
+    data_by_event : list
+        Represents data where the time is in range of the Events time frame. 
+
+    Methods
+    -------
+    read_data_file(file_path):
+        Sets the file_path for DataSets.
+    read_event_file(file_path):
+        Sets the file_path for the EventList.
+    seperate_data_files_by_event():
+        Returns select data from the DataEntry for which the data.time is between event.start_time and event.end_time.
+    write_data_files_by_event(output_dir):
+        Writes data to file by the event.
+    """    
     
     
     def __init__(self):
-        pass
+        self.all_events = None
+        self.all_data = None
+        self.data_by_event = []
         
         
     def read_data_file(self, file_path):
-        pass
+        self.all_data = DataSet(file_path)
         
         
-    def read_event_file(self):
-        pass
+    def read_event_file(self, file_path):
+        self.all_events = EventList(file_path)
         
         
     def seperate_data_files_by_event(self):
-        pass
+        for event in self.all_events.events:
+            data_for_event = self.all_data.get_data_by_event(event)
+            self.data_by_event.append(DataSet(self.all_data.file_path, raw_header = self.all_data.raw_header,  data = data_for_event))
         
         
-    def write_data_files_by_event(self):
-        pass
-        
-        
-    def clear(self):
-        pass
-        
-        
-    
-    
+    def write_data_files_by_event(self, output_dir):
+        event_num = 1
+        for data_set in self.data_by_event:
+            output_file_path = output_dir / f"Data_for_event_{event_num}.csv"
+            output_dir.mkdir(parents = True, exist_ok = True)
+            with open(output_file_path, 'w') as fh:
+                fh.write(data_set.raw_header)
+                for entry in data_set.data:
+                    fh.write(str(entry) + "\n")
+            event_num += 1
+   
 
 def Main():
     #controller = AnalysisController
     dataset_file_path = pathlib.Path(r"C:\Users\heart\Documents\Programming\Python\TimeSeriesDataAnalysis\Data\Datasets\Dataset_small.csv")
     event_file_path = pathlib.Path(r"C:\Users\heart\Documents\Programming\Python\TimeSeriesDataAnalysis\Data\Event Lists\Event_List_small.csv")
-    my_event = EventList(event_file_path)
-    breakpoint
+    output_dir = pathlib.Path(r"C:\Users\heart\Documents\Programming\OutputDump")
+    controller = AnalysisController()
+    controller.read_data_file(dataset_file_path)
+    controller.read_event_file(event_file_path)
+    controller.seperate_data_files_by_event()
+    controller.write_data_files_by_event(output_dir)
     print("Complete")
  
     
